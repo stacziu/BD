@@ -1,9 +1,9 @@
+from django.http import HttpResponse
+
 from .forms import UserRegistrationForm, LoginForm
 from .models import Users, Books, PhysicalBooks, Booksauthors, Booksgenres, Authors, Genres
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import check_password
-from .models import Users  # Assuming you have a custom `Users` model
-from django.contrib.auth import login
 
 
 def register(request):
@@ -47,6 +47,8 @@ def logout_view(request):
     return redirect('home')
 
 
+from django.core.files.storage import FileSystemStorage
+
 def add_book(request):
     if request.method == 'POST':
         # Create the book
@@ -55,8 +57,21 @@ def add_book(request):
         published_year = request.POST['published_year']
         number_of_copies = int(request.POST['number_of_copies'])
 
-        book = Books.objects.create(title=title, publisher=publisher, published_year=published_year)
+        # Handle the image
+        image = request.FILES.get('image')
+        if image:
+            fs = FileSystemStorage()
+            image_path = fs.save(image.name, image)
+        else:
+            image_path = None
 
+        # Create the book object with the image path
+        book = Books.objects.create(
+            title=title,
+            publisher=publisher,
+            published_year=published_year,
+            image=image_path
+        )
 
         # Handle authors
         author_names = request.POST['authors'].split(',')
@@ -70,34 +85,14 @@ def add_book(request):
             genre, created = Genres.objects.get_or_create(genre_name=name.strip())
             Booksgenres.objects.create(book=book, genre=genre)
 
+        # Create physical copies
         for i in range(number_of_copies):
             PhysicalBooks.objects.create(book=book, state=1)
 
-        return redirect('display_books')  # Adjust this to the name of your display_books URL
+        return redirect('home')
 
     return render(request, 'add_book.html')
 
-
-def display_books(request):
-    # Fetch all books
-    books = Books.objects.all()
-
-    # Add authors and genres using the intermediary tables
-    books_with_details = []
-    for book in books:
-        authors = Authors.objects.filter(
-            author_id__in=Booksauthors.objects.filter(book=book).values_list('author_id', flat=True)
-        )
-        genres = Genres.objects.filter(
-            genre_id__in=Booksgenres.objects.filter(book=book).values_list('genre_id', flat=True)
-        )
-        books_with_details.append({
-            'book': book,
-            'authors': authors,
-            'genres': genres
-        })
-
-    return render(request, 'display_books.html', {'books_with_details': books_with_details})
 
 def index(request):
     # Example query: get all books with genres
@@ -108,9 +103,34 @@ def index(request):
         genres = Booksgenres.objects.filter(book=book).select_related('genre')
         genre_names = ", ".join([g.genre.genre_name for g in genres])
         books_with_genres.append({
+            'id': book.book_id,
             'title': book.title,
             'published_year': book.published_year,
-            'genre_names': genre_names
+            'genre_names': genre_names,
+            'image': book.image.url if book.image else None,
         })
 
     return render(request, 'index.html', {'books': books_with_genres})
+
+
+def book_detail(request, book_id):
+    try:
+        # Get the book and its related details
+        book = Books.objects.get(pk=book_id)
+        genres = Booksgenres.objects.filter(book=book).select_related('genre')
+        genre_names = ", ".join([g.genre.genre_name for g in genres])
+        authors = Booksauthors.objects.filter(book=book).select_related('author')
+        author_names = ", ".join([a.author.author_name for a in authors])
+        copies = PhysicalBooks.objects.filter(book_id=1).count()
+        # Pass the book's details to the template
+        print(f"Image URL: {book.image.url}")
+        context = {
+            'book': book,
+            'genre_names': genre_names,
+            'author_names': author_names,
+            'image': book.image.url if book.image else None,
+            'copies': copies
+        }
+        return render(request, 'book_detail.html', context)
+    except Books.DoesNotExist:
+        return HttpResponse("Book not found.", status=404)

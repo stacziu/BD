@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Book image -->
+        
+            {% if book.image %}
+                <img src="{{ book.image.url }}" class="img-fluid" alt="{{ book.title }}">
+            {% else %}
+                <img src="{% static 'default.jpg' %}" class="img-fluid" alt="Default Book Image">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <!-- Book details -->
+            <h2>{{ book.title }}</h2>
+            <p><strong>Published Year:</strong> {{ book.published_year }}</p>
+            <p><strong>Publisher:</strong> {{ book.publisher }}</p>
+            <p><strong>Genres:</strong> {{ genre_names }}</p>
+            <p><strong>Authors:</strong> {{ author_names }}</p>
+            <p><strong>Available copies:</strong> {{ copies }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

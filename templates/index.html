@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container text-center">
@@ -27,20 +28,21 @@
 
     <div class="row justify-content-center">
         {% for book in books %}
-        <div class="card book-card text-center">
-            <div class="card-body">
-                <h5 class="card-title">{{ book.title }} ({{ book.published_year }})</h5>
-                <p class="card-text">{{ book.genre_names }}</p>
-                <div class="dropdown">
-                    <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        📚
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Wypożycz</a></li>
-                        <li><a class="dropdown-item" href="#">Szczegóły</a></li>
-                    </ul>
+        <div class="card book-card text-center" style="width: 18rem;">
+            <a href="{% url 'book_detail' book.id %}" style="text-decoration: none; color: inherit;">
+                <!-- Book image -->
+                {% if book.image %}
+                <img src="{{ book.image }}" class="card-img-top" alt="{{ book.title }}">
+                {% else %}
+                <img src="{% static 'default.jpg' %}" class="card-img-top" alt="Default Book Image">
+                {% endif %}
+                
+                <!-- Book details -->
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }} ({{ book.published_year }})</h5>
+                    <p class="card-text">{{ book.genre_names }}</p>
                 </div>
-            </div>
+            </a>
         </div>
         {% endfor %}
     </div>
