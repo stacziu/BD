@@ -1,5 +1,5 @@
 from django import forms
-from .models import Users
+from .models import Users, Contact, FAQ
 from django.contrib.auth.hashers import make_password
 
 class LoginForm(forms.Form):
@@ -53,7 +53,21 @@ class UserRegistrationForm(forms.ModelForm):
             user.save()
         return user
 
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Contact
+        fields = ['phone', 'email', 'address', 'working_hours']
+        widgets = {
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'working_hours': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
+class FAQForm(forms.ModelForm):
+    class Meta:
+        model = FAQ
+        fields = ['question','answer']
 
 
 

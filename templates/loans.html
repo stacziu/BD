@@ -1,0 +1,33 @@
+<h4>Active Loans</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Loan ID</th>
+            <th>Book</th>
+            <th>User</th>
+            <th>Loan Date</th>
+            <th>Return Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for loan in loans %}
+        <tr>
+            <td>{{ loan.loan_id }}</td>
+            <td>{{ loan.physical_book.book.title }}</td>
+            <td>{{ loan.user.username }}</td>
+            <td>{{ loan.loan_date }}</td>
+            <td>{{ loan.return_date }}</td>
+            <td>
+                <form method="post" action="{% url 'mark_returned' loan.loan_id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Mark as Returned</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="mt-4 text-start">
+        <a href="/" class="btn btn-secondary">Back</a>
+</div>

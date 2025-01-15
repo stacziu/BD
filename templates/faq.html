@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card p-4 shadow-sm">
+        <h2 class="text-center mb-4">Frequently Asked Questions (FAQ)</h2>
+        <div class="accordion" id="faqAccordion">
+
+            <!-- Pytanie 1 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading1">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1" aria-expanded="false" aria-controls="faqCollapse1">
+                        How do I register for the online library?
+                    </button>
+                </h2>
+                <div id="faqCollapse1" class="accordion-collapse collapse" aria-labelledby="faqHeading1" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        To register for the online library, click on the "Register" button on the homepage. Fill in your details and submit the form. You will receive a confirmation email with a link to activate your account.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pytanie 2 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading2">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                        How can I borrow a book?
+                    </button>
+                </h2>
+                <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Once logged in, search for the book you want to borrow using the search bar. Click on the "Borrow" button on the book's detail page. The book will be added to your account under "My Borrowed Books."
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pytanie 3 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading3">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                        How long can I keep borrowed books?
+                    </button>
+                </h2>
+                <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        You can borrow books for up to 14 days. After that, you will need to return the book or renew your loan to avoid late fees.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pytanie 4 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading4">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+                        Are there late fees for overdue books?
+                    </button>
+                </h2>
+                <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, overdue books incur a late fee of $0.50 per day. To avoid fees, make sure to return or renew your books on time.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pytanie 5 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="faqHeading5">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+                        Can I extend the borrowing period for a book?
+                    </button>
+                </h2>
+                <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, you can extend the borrowing period once for an additional 7 days. Go to "My Account," click on the borrowed book, and select "Renew Loan."
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Przycisk powrotu -->
+    <div class="mt-4 text-start">
+        <a href="/" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+{% endblock %}

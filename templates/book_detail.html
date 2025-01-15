@@ -4,6 +4,9 @@
 {% block content %}
 <div class="container mt-5">
     <div class="row">
+    <div class="mt-4 text-start">
+        <a href="/" class="btn btn-secondary">Back</a>
+    </div>
         <div class="col-md-4">
             <!-- Book image -->
         
@@ -22,6 +25,19 @@
             <p><strong>Authors:</strong> {{ author_names }}</p>
             <p><strong>Available copies:</strong> {{ copies }}</p>
         </div>
+        {% if custom_user.role == "admin" %}
+            <div class="mt-4">
+                <a href="{% url 'edit_book' book.book_id %}" class="btn btn-warning">Edit Book</a>
+            </div>
+        {% endif %}
+        {% if copies > 0 %}
+            <form method="post" action="{% url 'place_hold' book.book_id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Place Hold</button>
+            </form>
+        {% else %}
+            <p class="text-danger">No available copies at the moment.</p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

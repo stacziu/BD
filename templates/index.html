@@ -2,49 +2,60 @@
 {% load static %}
 
 {% block content %}
-<div class="container text-center">
+<div class="container">
     <div class="row mb-3">
-        <div class="col">
-            <button class="btn btn-success">Kategoria</button>
-            <button class="btn btn-success">Na topie 📈</button>
-            <button class="btn btn-success">Czytelnicy 📖</button>
-            <button class="btn btn-success">Kontakt 📞</button>
-            <button class="btn btn-success">Najczęstsze pytania ❓</button>
+        <div class="col-auto text-start">
+            <a href="{% url 'faq' %}" class="btn btn-success">Most Borrowed</a>
+            <a href="{% url 'contact' %}" class="btn btn-success">Contact</a>
+            <a href="{% url 'faq' %}" class="btn btn-success">FAQ</a>
+        </div>
+        <div class="col text-end">
+            {% if custom_user.role == 'admin' %}
+                <a href="{% url 'add_book' %}" class="btn btn-success">Add a New Book</a>
+                <a href="{% url 'users' %}" class="btn btn-success">Users</a>
+                <a href="{% url 'active_holds' %}" class="btn btn-warning">Hold requests</a>    
+                <a href="{% url 'active_loans' %}" class="btn btn-warning">Loans</a>
+            {% endif %}
         </div>
     </div>
-
-    <form class="mb-4">
+    
+    <!-- Search and Category Filter -->
+    <form class="mb-4" method="get">
         <div class="input-group">
-            <select class="form-select" name="category">
-                <option value="">None</option>
-                <option value="1">Przygody</option>
-                <option value="2">Biografie</option>
-                <option value="3">Fantastyka</option>
+            <select class="form-select" name="genre">
+                <option value="">Browse Genres</option>
+                {% for genre in genres %}
+                <option value="{{ genre.genre_id }}" {% if genre.genre_id|stringformat:"s" == request.GET.genre %}selected{% endif %}>
+                    {{ genre.genre_name }}
+                </option>
+                {% endfor %}
             </select>
-            <input type="text" class="form-control" placeholder="Search..." name="q">
-            <button class="btn btn-success">🔍</button>
+            <input type="text" class="form-control" placeholder="Search by book name..." name="q" value="{{ request.GET.q }}">
+            <button type="submit" class="btn btn-success">🔍</button>
+            <input type="text" class="form-control" placeholder="Search by author..." name="a" value="{{ request.GET.a }}">
+            <button type="submit" class="btn btn-success">🔍</button>
         </div>
     </form>
 
+    <!-- Book Display -->
     <div class="row justify-content-center">
         {% for book in books %}
-        <div class="card book-card text-center" style="width: 18rem;">
-            <a href="{% url 'book_detail' book.id %}" style="text-decoration: none; color: inherit;">
-                <!-- Book image -->
-                {% if book.image %}
-                <img src="{{ book.image }}" class="card-img-top" alt="{{ book.title }}">
-                {% else %}
-                <img src="{% static 'default.jpg' %}" class="card-img-top" alt="Default Book Image">
-                {% endif %}
-                
-                <!-- Book details -->
-                <div class="card-body">
-                    <h5 class="card-title">{{ book.title }} ({{ book.published_year }})</h5>
-                    <p class="card-text">{{ book.genre_names }}</p>
-                </div>
-            </a>
-        </div>
-        {% endfor %}
+            <div class="card book-card text-center" style="width: 18rem;">
+                <a href="{% url 'book_detail' book.id %}" style="text-decoration: none; color: inherit;">
+                    <!-- Book image -->
+                    {% if book.image %}
+                    <img src="{{ book.image }}" class="card-img-top" alt="{{ book.title }}">
+                    {% else %}
+                    <img src="{% static 'default.jpg' %}" class="card-img-top" alt="Default Book Image">
+                    {% endif %}
+            
+                    <!-- Book details -->
+                    <div class="card-body">
+                        <h5 class="card-title">{{ book.title }} ({{ book.published_year }})</h5>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
     </div>
 </div>
 {% endblock %}

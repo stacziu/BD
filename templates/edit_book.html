@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Edit Book Form -->
+        <div class="col-md-6">
+        <div class="mt-4 text-start">
+            <a href="/" class="btn btn-secondary">Back</a>
+        </div>
+            <h1>Edit Book</h1>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" value="{{ book.title }}" required><br>
+
+                <label for="publisher">Publisher:</label>
+                <input type="text" id="publisher" name="publisher" value="{{ book.publisher }}" required><br>
+
+                <label for="published_year">Published Year:</label>
+                <input type="text" id="published_year" name="published_year" value="{{ book.published_year }}" required><br>
+
+                <label for="authors">Authors (comma-separated):</label>
+                <input type="text" id="authors" name="authors" value="{{ book.booksauthors_set.all|join:', ' }}" required><br>
+
+                <label for="genres">Genres (comma-separated):</label>
+                <input type="text" id="genres" name="genres" value="{{ book.booksgenres_set.all|join:', ' }}" required><br>
+                
+                <label for="image">Upload New Image:</label>
+                <input type="file" id="image" name="image"><br>
+
+                {% if book.image %}
+                <p>Current image:</p>
+                <img src="{{ book.image.url }}" alt="Book Image" class="img-fluid">
+                {% endif %}
+
+                <button type="submit" class="btn btn-success mt-3">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- List of Physical Books -->
+        <div class="col-md-6">
+            <h2>Physical Copies</h2>
+            <ul class="list-group">
+                {% for copy in physical_books %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>ID:</strong> {{ copy.physical_book_id }}<br>
+                        <strong>Status:</strong> 
+                        {% if copy.state == 1 %}
+                            Available
+                        {% elif copy.state == 0 %}
+                            Loaned
+                        {% else %}
+                            Unknown
+                        {% endif %}
+                    </div>
+                    <form method="post" action="{% url 'delete_physical_book' copy.physical_book_id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </li>
+                {% empty %}
+                <p>No physical copies available.</p>
+                {% endfor %}
+            </ul>
+            <div class="mt-4">
+                <h5>Add a New Physical Copy</h5>
+                <form method="post" action="{% url 'add_physical_book' book.book_id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success btn-sm">Add Physical Copy</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

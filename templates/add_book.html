@@ -1,26 +1,49 @@
-<h1>Add a New Book</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="title">Title:</label>
-    <input type="text" id="title" name="title" required><br>
+{% extends "base.html" %}
 
-    <label for="publisher">Publisher:</label>
-    <input type="text" id="publisher" name="publisher" required><br>
-
-    <label for="published_year">Published Year:</label>
-    <input type="text" id="published_year" name="published_year" required><br>
-
-    <label for="authors">Authors (comma-separated):</label>
-    <input type="text" id="authors" name="authors" required><br>
-
-    <label for="genres">Genres (comma-separated):</label>
-    <input type="text" id="genres" name="genres" required><br>
-    
-    <label for="number_of_copies">Number of Copies:</label>
-    <input type="number" id="number_of_copies" name="number_of_copies" min="1" value="1" required><br>
-    
-    <label for="image">Upload Image:</label>
-    <input type="file" id="image" name="image"><br>
-
-    <button type="submit">Add Book</button>
-</form>
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="form-container bg-white p-4 rounded shadow position-relative" style="max-width: 500px; width: 100%;">
+        <!-- Przycisk Back -->
+        <a href="/" class="btn btn-secondary position-absolute" style="top: 10px; left: 10px;">Back</a>
+        
+        <!-- Nagłówek -->
+        <h1 class="text-center mb-4">Add a New Book</h1>
+        
+        <!-- Formularz dodawania książki -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="title" class="form-label">Title:</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="publisher" class="form-label">Publisher:</label>
+                <input type="text" id="publisher" name="publisher" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="published_year" class="form-label">Published Year:</label>
+                <input type="text" id="published_year" name="published_year" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="authors" class="form-label">Authors (comma-separated):</label>
+                <input type="text" id="authors" name="authors" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="genres" class="form-label">Genres (comma-separated):</label>
+                <input type="text" id="genres" name="genres" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="number_of_copies" class="form-label">Number of Copies:</label>
+                <input type="number" id="number_of_copies" name="number_of_copies" class="form-control" min="1" value="1" required>
+            </div>
+            <div class="mb-3">
+                <label for="image">Upload Image:</label>
+                <input type="file" id="image" name="image" class="form-control">
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Add Book</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

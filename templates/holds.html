@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">Active Holds</h2>
+
+    {% if holds.exists %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>User</th>
+                <th>Hold Date</th>
+                <th>Release Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hold in holds %}
+            <tr>
+                <td>{{ hold.physical_book.book.title }}</td>
+                <td>{{ hold.user.username }}</td>
+                <td>{{ hold.hold_date }}</td>
+                <td>{{ hold.release_date }}</td>
+                <td>
+                    {% if hold.status == 1 %}
+                        Active
+                    {% else %}
+                        Inactive
+                    {% endif %}
+                </td>
+                <td>
+                    <form method="post" action="{% url 'approve_loan' hold.hold_id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-sm">Accept Loan</button>
+                    </form>
+                    <form method="post" action="{% url 'cancel_hold' hold.hold_id %}" style="display: inline-block;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Cancel Hold</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-center">No active holds to display.</p>
+    {% endif %}
+    <div class="mt-4 text-start">
+        <a href="/" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+{% endblock %}

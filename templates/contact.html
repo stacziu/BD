@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card p-4 shadow-sm position-relative">
+        <!-- Przycisk Back w lewym górnym rogu -->
+        <a href="/" class="btn btn-secondary position-absolute" style="top: 10px; left: 10px;">Back</a>
+
+        <!-- Nagłówek Contact Us -->
+        <h2 class="text-center mb-4">Contact Us</h2>
+
+        <!-- Informacje kontaktowe -->
+        <p><strong>Phone:</strong> {{ contact_info.phone }}</p>
+        <p><strong>Email:</strong> <a href="mailto:{{ contact_info.email }}">{{ contact_info.email }}</a></p>
+        <p><strong>Address:</strong> {{ contact_info.address }}</p>
+        <p><strong>Working Hours:</strong> {{ contact_info.working_hours }}</p>
+    </div>
+
+    <!-- Sekcja edycji dla administratora -->
+    {% if custom_user.role == 'admin' %}
+    <div class="card mt-5 p-4 shadow-sm">
+        <h3 class="mb-4">Edit Contact Information</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
