@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'libraryapp.apps.LibraryappConfig',
     'bootstrapform',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [

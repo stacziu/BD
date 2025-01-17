@@ -1,33 +1,94 @@
-<h4>Active Loans</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Loan ID</th>
-            <th>Book</th>
-            <th>User</th>
-            <th>Loan Date</th>
-            <th>Return Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for loan in loans %}
-        <tr>
-            <td>{{ loan.loan_id }}</td>
-            <td>{{ loan.physical_book.book.title }}</td>
-            <td>{{ loan.user.username }}</td>
-            <td>{{ loan.loan_date }}</td>
-            <td>{{ loan.return_date }}</td>
-            <td>
-                <form method="post" action="{% url 'mark_returned' loan.loan_id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-success">Mark as Returned</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<h4>Loans Overview</h4>
+<div class="row mb-3">
+    <!-- Search and Sorting Section -->
+    <form method="get" class="d-flex justify-content-between">
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="search" placeholder="Search by username..." value="{{ search_query }}">
+        </div>
+        <div class="col-md-3">
+            <select name="sort" class="form-select">
+                <option value="">Sort by</option>
+                <option value="loan_date_asc" {% if sort_option == "loan_date_asc" %}selected{% endif %}>Loan Date (Ascending)</option>
+                <option value="loan_date_desc" {% if sort_option == "loan_date_desc" %}selected{% endif %}>Loan Date (Descending)</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary">Search & Sort</button>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <!-- Active Loans Section -->
+    <div class="col-md-6">
+        <h5>Active Loans</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Book</th>
+                    <th>User</th>
+                    <th>Loan Date</th>
+                    <th>Return Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in active_loans %}
+                <tr>
+                    <td>{{ loan.loan_id }}</td>
+                    <td>{{ loan.physical_book.book.title }}</td>
+                    <td>{{ loan.user.username }}</td>
+                    <td>{{ loan.loan_date }}</td>
+                    <td>{{ loan.return_date }}</td>
+                    <td>
+                        <form method="post" action="{% url 'mark_returned' loan.loan_id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Mark as Returned</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Overdue Loans Section -->
+    <div class="col-md-6">
+        <h5>Overdue Loans</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Loan ID</th>
+                    <th>Book</th>
+                    <th>User</th>
+                    <th>Loan Date</th>
+                    <th>Return Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in overdue_loans %}
+                <tr>
+                    <td>{{ loan.loan_id }}</td>
+                    <td>{{ loan.physical_book.book.title }}</td>
+                    <td>{{ loan.user.username }}</td>
+                    <td>{{ loan.loan_date }}</td>
+                    <td>{{ loan.return_date }}</td>
+                    <td>
+                        <form method="post" action="{% url 'mark_returned' loan.loan_id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success">Mark as Returned</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Back Button -->
 <div class="mt-4 text-start">
-        <a href="/" class="btn btn-secondary">Back</a>
+    <a href="/" class="btn btn-secondary">Back</a>
 </div>

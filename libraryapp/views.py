@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 
 from .forms import UserRegistrationForm, LoginForm, ContactForm, FAQForm
-from .models import Users, Books, PhysicalBooks, Booksauthors, Booksgenres, Authors, Genres, Holds, Loans, Contact, FAQ
+from .models import Users, Books, PhysicalBooks, Booksauthors, Booksgenres, Authors, Genres, Holds, Loans, Contact, FAQ, Fines
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import check_password
 from django.core.files.storage import FileSystemStorage
@@ -287,22 +287,55 @@ def cancel_hold(request, hold_id):
 def mark_returned(request, loan_id):
     if request.method == "POST":
         loan = get_object_or_404(Loans, loan_id=loan_id)
-        loan.status = 0
+
+        unpaid_fine = Fines.objects.filter(loans_loan=loan, status=1).exists()
+        if unpaid_fine:
+            # Notify the user that the loan cannot be marked as returned due to unpaid fines
+            messages.error(request, "This loan has unpaid fines. Please clear the fines before marking it as returned.")
+            return redirect('active_loans')
+
+            # If no unpaid fines, proceed to mark the loan as returned
+        loan.status = 0  # Assuming 0 means 'returned'
         loan.save()
 
         # Mark the physical book as available
-        loan.physical_book.state = 1
+        loan.physical_book.state = 1  # Assuming 1 means 'available'
         loan.physical_book.save()
 
+        # Provide success feedback to the user
+        messages.success(request, "The loan has been successfully marked as returned.")
         return redirect('active_loans')
 
 def active_holds(request):
     holds = Holds.objects.filter(status=1)  # Fetch active holds
     return render(request, 'holds.html', {'holds': holds})
 
-def loans(request):
-    all_loans = Loans.objects.all()
-    return render(request, 'loans.html', {'loans': all_loans})
+def loans_view(request):
+    search_query = request.GET.get('search')
+    sort_option = request.GET.get('sort')
+
+    loans = Loans.objects.select_related('user', 'physical_book__book')
+
+    # Filter by search query (username)
+    if search_query:
+        loans = loans.filter(user__username__icontains=search_query)
+
+    # Sorting logic
+    if sort_option == 'loan_date_asc':
+        loans = loans.order_by('loan_date')
+    elif sort_option == 'loan_date_desc':
+        loans = loans.order_by('-loan_date')
+
+    today = datetime.date.today()
+
+
+    active_loans = loans.filter(status=1, return_date__gte=today)
+    overdue_loans = loans.filter(status=1, return_date__lt=today)
+
+    return render(request, 'loans.html', {
+        'active_loans': active_loans,
+        'overdue_loans': overdue_loans,
+    })
 
 def contact(request):
     contact_info, created = Contact.objects.get_or_create(pk=1, defaults={
