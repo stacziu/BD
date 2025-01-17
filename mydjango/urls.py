@@ -44,4 +44,6 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('faq/', views.faq, name='faq'),
     path('most_borrowed/', views.add_book, name='most_borrowed'),
+    path('fines/', views.active_fines, name='fines'),
+    path('mark_paid/<int:fine_id>', views.mark_paid, name='mark_paid')
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

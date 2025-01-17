@@ -150,7 +150,8 @@ def book_detail(request, book_id):
             'genre_names': genre_names,
             'author_names': author_names,
             'image': book.image.url if book.image else None,
-            'copies': copies
+            'copies': copies,
+
         }
         return render(request, 'book_detail.html', context)
     except Books.DoesNotExist:
@@ -313,8 +314,8 @@ def active_holds(request):
 def loans_view(request):
     search_query = request.GET.get('search')
     sort_option = request.GET.get('sort')
-
     loans = Loans.objects.select_related('user', 'physical_book__book')
+
 
     # Filter by search query (username)
     if search_query:
@@ -337,6 +338,37 @@ def loans_view(request):
         'overdue_loans': overdue_loans,
     })
 
+def mark_paid(request, fine_id):
+    if request.method == "POST":
+        fine = get_object_or_404(Fines, fine_id=fine_id)
+
+        fine.status = 0
+        fine.save()
+
+        return redirect('fines')
+
+def active_fines(request):
+    search_query = request.GET.get('search')
+    sort_option = request.GET.get('sort')
+    fines = Fines.objects.select_related('user')
+
+    # Filter by search query (username)
+    if search_query:
+        fines = fines.filter(user__username__icontains=search_query)
+
+    # Sorting logic
+    if sort_option == 'fine_date_asc':
+        fines = fines.order_by('issued_date')
+    elif sort_option == 'fine_date_desc':
+        fines = fines.order_by('-issued_date')
+
+
+    unpaid_fines = fines.filter(status=1)
+
+
+    return render(request, 'active_fines.html', {
+        'unpaid_fines': unpaid_fines,
+    })
 def contact(request):
     contact_info, created = Contact.objects.get_or_create(pk=1, defaults={
         'phone': '+48 123-456-789',  # Wartości domyślne
