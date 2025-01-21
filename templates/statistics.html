@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Heading -->
+    <h1 class="mb-4 text-center">User and Library Statistics</h1>
+
+    <!-- Back Button -->
+    <div class="row mb-3">
+        <div class="col text-start">
+            <a href="/" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="row justify-content-center">
+        <!-- General Statistics -->
+        <div class="col-md-5 card text-center mb-4" style="border: 2px solid green;">
+            <div class="card-body">
+                <h3 class="card-title">General Statistics</h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Total Users:</strong> {{ total_users }}</li>
+                    <li class="list-group-item"><strong>Total Loans:</strong> {{ total_loans }}</li>
+                    <li class="list-group-item"><strong>Active Loans:</strong> {{ active_loans }}</li>
+                    <li class="list-group-item"><strong>Total Books:</strong> {{ total_books }}</li>
+                    <li class="list-group-item"><strong>Total Physical Books:</strong> {{ total_physical_books }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Top 5 Most Active Users -->
+        <div class="col-md-5 card text-center mb-4" style="border: 2px solid green;">
+            <div class="card-body">
+                <h3 class="card-title">Top 5 Most Active Users</h3>
+                <ol class="list-group list-group-numbered">
+                    {% for user in most_active_users %}
+                        <li class="list-group-item">
+                            <strong>{{ user.user__username }}</strong> - {{ user.loans_count }} loans
+                        </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Most Borrowed Books Section -->
+    <div class="row justify-content-center">
+        <!-- Top 5 Most Borrowed Books -->
+        <div class="col-md-8 card text-center" style="border: 2px solid green;">
+            <div class="card-body">
+                <h3 class="card-title">Top 5 Most Borrowed Books</h3>
+                <ol class="list-group list-group-numbered">
+                    {% for book in most_popular_books %}
+                        <li class="list-group-item">
+                            <strong>{{ book.physical_book__book__title }}</strong> - {{ book.borrowed_count }} loans
+                        </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

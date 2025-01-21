@@ -369,6 +369,7 @@ def active_fines(request):
     return render(request, 'active_fines.html', {
         'unpaid_fines': unpaid_fines,
     })
+
 def contact(request):
     contact_info, created = Contact.objects.get_or_create(pk=1, defaults={
         'phone': '+48 123-456-789',  # Wartości domyślne
@@ -437,7 +438,7 @@ def update_profile(request):
             user.phone_number = request.POST.get("phone_number", user.phone_number)
             user.role = request.POST.get("role", user.role)
             user.save()
-            return redirect('/profile/')  # Przekierowanie na stronę profilu
+            return redirect('/profile/')
         except Users.DoesNotExist:
             return HttpResponse("User not found.", status=404)
     else:
@@ -445,5 +446,31 @@ def update_profile(request):
         if not user_id:
             return redirect('/login')
 
+
+        # Fetch loans for the user and calculate derived fields
+        loans = Loans.objects.filter(user_id=user_id, status = 1).select_related('physical_book')
+        fines = Fines.objects.filter(user_id=user_id).select_related('loans_loan')
+
+
+        loan_details = []
+        for loan in loans:
+            # Find the fine associated with this loan
+            fine = fines.filter(loans_loan=loan).first()
+            fine_amount = fine.amount if fine else 0.00
+            fine_status = 'Paid' if fine and fine.status == 0 else 'Unpaid'
+            issued_date = fine.issued_date if fine else None
+
+            loan_details.append({
+                'book_title': loan.physical_book.book.title,  # Assuming PhysicalBooks has a 'title' field
+                'loan_date': loan.loan_date,
+                'return_date': loan.return_date,
+                'days_remaining': (loan.return_date - datetime.date.today()).days if loan.status == 1 else "N/A",
+                'fine_amount': f"${fine_amount:.2f}",
+                'fine_status': fine_status,
+                'issued_date': issued_date,
+                'status': 'Active' if loan.status == 1 else 'Returned',
+            })
+
         user = Users.objects.get(pk=user_id)
-        return render(request, 'profile.html', {'user': user})
+        return render(request, 'profile.html', {'user': user, 'loans': loan_details})
+

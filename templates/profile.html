@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <div class="row">
         <!-- Left column: Profile Editing -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="profile-container bg-white p-4 rounded shadow">
                 <a href="/" class="btn btn-secondary mb-3">Back</a>
                 <h1 class="text-center">User Profile</h1>
@@ -36,41 +36,51 @@
         </div>
 
         <!-- Right column: Borrowing History -->
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="history-container bg-white p-4 rounded shadow">
-                <h2 class="text-center">Borrowing History</h2>
+                <h2 class="text-center">Active loans</h2>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Title</th>
                             <th>Borrowed On</th>
+                            <th>Return Date</th>
                             <th>Days Remaining</th>
-                            <th>Fine</th>
-                            <th>Status</th>
+                            <th>Fine Amount</th>
+                            <th>Fine Issued Date</th>
+                            <th>Fine Status</th>
+                            <th>Loan Status</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for loan in loans %}
                         <tr>
-                            <td>A Game of Thrones</td>
-                            <td>2023-01-01</td>
-                            <td>5</td>
-                            <td>$0.00</td>
-                            <td>Active</td>
+                            <td>{{ loan.book_title }}</td>
+                            <td>{{ loan.loan_date }}</td>
+                            <td>{{ loan.return_date }}</td>
+                            <td>
+                                {% if loan.days_remaining != "N/A" %}
+                                    {{ loan.days_remaining }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td>{{ loan.fine_amount }}</td>
+                            <td>
+                                {% if loan.issued_date %}
+                                    {{ loan.issued_date }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td>{{ loan.fine_status }}</td>
+                            <td>{{ loan.status }}</td>
                         </tr>
+                        {% empty %}
                         <tr>
-                            <td>The Catcher in the Rye</td>
-                            <td>2023-01-15</td>
-                            <td>N/A</td>
-                            <td>$2.50</td>
-                            <td>Returned</td>
+                            <td colspan="8" class="text-center">No borrowing history available.</td>
                         </tr>
-                        <tr>
-                            <td>To Kill a Mockingbird</td>
-                            <td>2023-02-01</td>
-                            <td>-3</td>
-                            <td>$5.00</td>
-                            <td>Active</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

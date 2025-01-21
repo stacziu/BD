@@ -27,8 +27,8 @@
                     <th>Loan ID</th>
                     <th>Book</th>
                     <th>User</th>
-                    <th>Loan Date</th>
-                    <th>Return Date</th>
+                    <th>Issued date</th>
+                    <th>Amount</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -39,7 +39,7 @@
                     <td>{{ fine.loans.physical_book.book.title }}</td>
                     <td>{{ fine.user.username }}</td>
                     <td>{{ fine.issued_date }}</td>
-                    <td>{{ fine.amount.return_date }}</td>
+                    <td>{{ fine.amount }}</td>>
                     <td>
                         <form method="post" action="{% url 'mark_paid' fine.fine_id %}">
                             {% csrf_token %}
